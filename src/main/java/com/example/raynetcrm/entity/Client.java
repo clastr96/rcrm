@@ -42,6 +42,13 @@ public class Client {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, regNumber, title, email, phone, upsertDate);
+        int hash = 7;
+        hash = 31 * hash + id.intValue();
+        hash = 31 * hash + (regNumber == null ? 0 : regNumber.hashCode());
+        hash = 31 * hash + (title == null ? 0 : title.hashCode());
+        hash = 31 * hash + (email == null ? 0 : email.hashCode());
+        hash = 31 * hash + (phone == null ? 0 : phone.hashCode());
+        hash = 31 * hash + (upsertDate == null ? 0 : upsertDate.hashCode());
+        return hash;
     }
 }

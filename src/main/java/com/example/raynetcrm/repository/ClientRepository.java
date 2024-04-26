@@ -9,4 +9,5 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
     boolean existsByRegNumber(String regNumber);
 
     List<Client> findAllByRegNumber(String regNumber);
+    List<Client> findAllByUpsertDateIsNull();
 }

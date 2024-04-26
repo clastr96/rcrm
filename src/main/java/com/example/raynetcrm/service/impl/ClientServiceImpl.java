@@ -4,9 +4,9 @@ import com.example.raynetcrm.dto.ClientDto;
 import com.example.raynetcrm.entity.Client;
 import com.example.raynetcrm.repository.ClientRepository;
 import com.example.raynetcrm.service.ClientService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -44,6 +44,11 @@ public class ClientServiceImpl implements ClientService {
             updatedClients.add(clientRepository.save(client));
         }
         return updatedClients;
+    }
+
+    @Override
+    public List<Client> findAllReadyForUpsert() {
+        return clientRepository.findAllByUpsertDateIsNull();
     }
 
     @Override
