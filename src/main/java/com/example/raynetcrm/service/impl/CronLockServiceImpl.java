@@ -29,8 +29,7 @@ public class CronLockServiceImpl implements CronLockService {
     }
 
     @Override
-    public CronLock releaseLock(CronLock cronLock) {
-        cronLock.setLockedAt(null);
-        return cronLockRepository.save(cronLock);
+    public void releaseLock(CronLock cronLock) {
+        cronLockRepository.delete(cronLock);
     }
 }

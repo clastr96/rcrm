@@ -12,6 +12,5 @@ public interface ClientService {
 
     List<Client> updateClient(ClientDto clientDto);
     List<Client> findAllReadyForUpsert();
-
     Client markClientAsUpserted(Client client);
 }

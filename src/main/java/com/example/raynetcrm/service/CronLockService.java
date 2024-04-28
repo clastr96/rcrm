@@ -5,5 +5,5 @@ import com.example.raynetcrm.entity.CronLock;
 public interface CronLockService {
     boolean acquireLock();
     CronLock createLock();
-    CronLock releaseLock(CronLock cronLock);
+    void releaseLock(CronLock cronLock);
 }

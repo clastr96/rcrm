@@ -1,6 +1,7 @@
 package com.example.raynetcrm.service.impl;
 
 import com.example.raynetcrm.entity.Client;
+import com.example.raynetcrm.mail.EmailSender;
 import com.example.raynetcrm.service.ClientService;
 import com.example.raynetcrm.service.RCRMService;
 import com.example.raynetcrm.util.JsonUtil;
@@ -22,6 +23,7 @@ import java.util.*;
 public class RCRMServiceImpl implements RCRMService {
     private final RestTemplate restTemplate;
     private final ClientService clientService;
+    private final EmailSender emailSender;
 
     @Value("${rcrm.api.url}")
     private String url;
@@ -33,7 +35,7 @@ public class RCRMServiceImpl implements RCRMService {
     private String instancename;
     private int rateLimitCount;
     private static int RATE_LIMIT_TRESHOLD = 10;
-    public void upsertClient(Client client) {
+    public void upsertClient(Client client, boolean lastRecord) {
         if (canSendRequest()) {
             Optional<List<Long>> idsToUpdateOptional = Optional.ofNullable(isAlreadyRegistered(client));
             idsToUpdateOptional.ifPresent(idsToUpdate -> {
@@ -44,7 +46,16 @@ public class RCRMServiceImpl implements RCRMService {
                 }
             });
         } else {
-            log.error("Exceeded the daily rate limit, will retry in scheduled job");
+            log.error("Exceeded the daily rate limit, will retry in scheduled job.");
+            return;
+        }
+
+        if (lastRecord) {
+            log.info("Processed all records.");
+            emailSender.sendEmail(
+                    "Successfully processed all clients imports.",
+                    "We have successfully processed all imported clients."
+            );
         }
     }
     private void createClient(Client client) {
