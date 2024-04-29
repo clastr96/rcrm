@@ -15,6 +15,8 @@ RaynetCRM is a Java application for importing client data from CSV files into a 
 ## Installation
 - Clone the repository: git clone https://github.com/clastr96/rcrm.git
 - Navigate to the project directory: cd raynet-crm
+- in application.properties file, fill in **rcrm.api.email.to** (the email you want to be notified), **rcrm.api.key**,
+**spring.mail.password** 
 - Build the project: **./gradlew build** 
 - The application is prepared to run in docker containers, run : **docker-compose up -d** to start the java and mysql
   containers
@@ -36,5 +38,6 @@ regNumber;title;email;phone
 - Spring Framework
 - Spring Boot
 - Lombok
+- Flyway
 - OpenCSV
 - RESTful API
