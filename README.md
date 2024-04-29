@@ -13,7 +13,7 @@ RaynetCRM is a Java application for importing client data from CSV files into a 
 - Docker Compose
 
 ## Installation
-- Clone the repository: git clone https://github.com/example/raynet-crm.git
+- Clone the repository: git clone https://github.com/clastr96/rcrm.git
 - Navigate to the project directory: cd raynet-crm
 - Build the project: **./gradlew build** 
 - The application is prepared to run in docker containers, run : **docker-compose up -d** to start the java and mysql
