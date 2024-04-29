@@ -1,6 +1,6 @@
 package com.example.raynetcrm.service.impl;
 
-import com.example.raynetcrm.dto.ClientDto;
+import com.example.raynetcrm.dto.ClientCsvBean;
 import com.example.raynetcrm.entity.Client;
 import com.example.raynetcrm.repository.ClientRepository;
 import com.example.raynetcrm.service.ClientService;
@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class ClientServiceImpl implements ClientService {
     private final ClientRepository clientRepository;
     @Override
@@ -23,18 +23,18 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public Client createClient(ClientDto clientDto) {
+    public Client createClient(ClientCsvBean clientCsvBean) {
         Client client = new Client();
-        client.setRegNumber(clientDto.getRegNumber());
-        client.setTitle(clientDto.getTitle());
-        client.setEmail(clientDto.getEmail());
-        client.setPhone(clientDto.getPhone());
+        client.setRegNumber(clientCsvBean.getRegNumber());
+        client.setTitle(clientCsvBean.getTitle());
+        client.setEmail(clientCsvBean.getEmail());
+        client.setPhone(clientCsvBean.getPhone());
         return clientRepository.save(client);
     }
 
     @Override
-    public List<Client> updateClient(ClientDto clientDto) {
-        List<Client> clientsToUpdate = clientRepository.findAllByRegNumber(clientDto.getRegNumber());
+    public List<Client> updateClient(ClientCsvBean clientCsvBean) {
+        List<Client> clientsToUpdate = clientRepository.findAllByRegNumber(clientCsvBean.getRegNumber());
         List<Client> updatedClients = new ArrayList<>();
 
         for (Client client : clientsToUpdate) {

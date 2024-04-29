@@ -1,6 +1,6 @@
 package com.example.raynetcrm.service.impl;
 
-import com.example.raynetcrm.dto.ClientDto;
+import com.example.raynetcrm.dto.ClientCsvBean;
 import com.example.raynetcrm.entity.Client;
 import com.example.raynetcrm.service.ClientImporterCSV;
 import com.example.raynetcrm.service.ClientService;
@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,45 +22,48 @@ import java.util.List;
 
 @Service
 @Slf4j
+@Transactional
 @RequiredArgsConstructor
 public class ClientImporterCSVImpl implements ClientImporterCSV {
     private final ClientService clientService;
     private final RCRMService rcrmService;
     @Async
     @Override
-    public void processCsv(InputStream inputStream) throws IOException {
+    public void processCsv(InputStream inputStream) {
         log.info("Start processing the CSV file.");
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-            CsvToBean<ClientDto> csvReader = getCsvToBeanBuilder(reader).build();
+            CsvToBean<ClientCsvBean> csvReader = getCsvToBeanBuilder(reader).build();
             processCsvRecords(csvReader.iterator());
+        } catch (IOException e) {
+            log.error("Error processing CSV file: {}", e.getMessage());
         }
     }
 
-    private void processCsvRecords(Iterator<ClientDto> iterator) {
+    private void processCsvRecords(Iterator<ClientCsvBean> iterator) {
         while (iterator.hasNext()) {
-            ClientDto clientDto = iterator.next();
+            ClientCsvBean clientCsvBean = iterator.next();
             boolean isLastRecord = !iterator.hasNext();
-            if (clientDto.isValid()) {
-                processClient(clientDto, isLastRecord);
+            if (clientCsvBean.isValid()) {
+                processClient(clientCsvBean, isLastRecord);
             }
         }
     }
 
-    private CsvToBeanBuilder<ClientDto> getCsvToBeanBuilder(BufferedReader reader) {
-        return new CsvToBeanBuilder<ClientDto>(reader)
-                .withType(ClientDto.class)
+    private CsvToBeanBuilder<ClientCsvBean> getCsvToBeanBuilder(BufferedReader reader) {
+        return new CsvToBeanBuilder<ClientCsvBean>(reader)
+                .withType(ClientCsvBean.class)
                 .withSeparator(';')
                 .withIgnoreEmptyLine(true)
                 .withSkipLines(1);
     }
 
-    private void processClient(ClientDto clientDto, boolean lastRecord) {
-        boolean doesExistInDb = clientService.clientExists(clientDto.getRegNumber());
+    private void processClient(ClientCsvBean clientCsvBean, boolean lastRecord) {
+        boolean doesExistInDb = clientService.clientExists(clientCsvBean.getRegNumber());
         if (doesExistInDb) {
-            List<Client> clients = clientService.updateClient(clientDto);
+            List<Client> clients = clientService.updateClient(clientCsvBean);
             updateClients(clients, lastRecord);
         } else {
-            Client client = clientService.createClient(clientDto);
+            Client client = clientService.createClient(clientCsvBean);
             rcrmService.upsertClient(client, lastRecord);
         }
     }
