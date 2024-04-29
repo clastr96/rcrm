@@ -6,7 +6,6 @@ RaynetCRM is a Java application for importing client data from CSV files into a 
 - Process client data and update existing clients or create new ones in the CRM system
 - Asynchronous processing for improved performance
 - Integration with external CRM system via REST API
-- Hourly scheduled job to process remaining clients after rate limit hit
 
 ## Requirements
 - Gradle
@@ -29,6 +28,7 @@ regNumber;title;email;phone
 123456;Example Company;example@example.com;123-456-7890
 - Call the **localhost:8080/uploadData** endpoint with the csv file as a request body
 - The application will process the CSV file asynchronously, updating existing clients or creating new ones in the CRM system
+- Not processed clients (after rate limit hit) will be processed in hourly scheduled job
 
 ## Technologies Used
 - Java
